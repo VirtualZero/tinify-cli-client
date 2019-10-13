@@ -19,14 +19,13 @@ def compress_image(image_path, output_path, new_name):
         color='green'
     ) as spinner:
         source = tinify.from_file(image_path)
+        name = image_name.split('.')[0]
+        extension = image_name.split('.')[1]
+        path_regex = re.compile('^(.*/).*$')
+        optimized_name = f'{name}-optimized.{extension}'
 
         if not output_path:
             if not new_name:
-                name = image_name.split('.')[0]
-                extension = image_name.split('.')[1]
-                path_regex = re.compile('^(.*/).*$')
-                optimized_name = f'{name}-optimized.{extension}'
-
                 try:
                     save_to_path = os.path.join(
                         path_regex.search(image_path).group(1),
@@ -48,7 +47,7 @@ def compress_image(image_path, output_path, new_name):
 
         else:
             if not new_name:
-                save_to_path = os.path.join(output_path, image_name)
+                save_to_path = os.path.join(output_path, optimized_name)
                 source.to_file(save_to_path)
 
             else:
@@ -341,55 +340,71 @@ def resize_image(image_path, output_path, new_name, method, height, width):
 
         if method == 'scale':
             if height:
-                scaled_image = source.resize(
+                resized_image = source.resize(
                     method=method,
                     height=int(height)
                 )
 
-                resized_name = f'{name}-resized-h{height}.{extension}'
+                resized_name = f'{name}-scaled-h{height}.{extension}'
 
             elif width:
-                scaled_image = source.resize(
+                resized_image = source.resize(
                     method=method,
                     width=int(width)
                 )
 
-                resized_name = f'{name}-resized-w{width}.{extension}'
+                resized_name = f'{name}-scaled-w{width}.{extension}'
 
-            if not output_path:
-                if not new_name:
-                    try:
-                        save_to_path = os.path.join(
-                            path_regex.search(image_path).group(1),
-                            resized_name
-                        )
+        else:
+            resized_image = source.resize(
+                method=method,
+                width=int(width),
+                height=int(height)
+            )
 
-                    except AttributeError:
-                        save_to_path = resized_name
+            resized_name = f'{name}-{method}-{width}x{height}.{extension}'
 
-                    scaled_image.to_file(save_to_path)
+        if not output_path:
+            if not new_name:
+                try:
+                    save_to_path = os.path.join(
+                        path_regex.search(image_path).group(1),
+                        resized_name
+                    )
 
-                else:
-                    try:
-                        save_to_path = os.path.join(
-                            path_regex.search(image_path).group(1),
-                            new_name
-                        )
+                except AttributeError:
+                    save_to_path = resized_name
 
-                    except AttributeError:
-                        save_to_path = new_name
-
-                    scaled_image.to_file(save_to_path)
+                resized_image.to_file(save_to_path)
 
             else:
-                if not new_name:
-                    save_to_path = os.path.join(output_path, image_name)
-                    scaled_image.to_file(save_to_path)
+                try:
+                    save_to_path = os.path.join(
+                        path_regex.search(image_path).group(1),
+                        new_name
+                    )
 
-                else:
-                    save_to_path = os.path.join(output_path, new_name)
-                    scaled_image.to_file(save_to_path)
+                except AttributeError:
+                    save_to_path = new_name
 
+                resized_image.to_file(save_to_path)
+
+        else:
+            if not new_name:
+                save_to_path = os.path.join(output_path, resized_name)
+                resized_image.to_file(save_to_path)
+
+            else:
+                save_to_path = os.path.join(output_path, new_name)
+                resized_image.to_file(save_to_path)
+
+    print(
+        colored(
+            f'Resized image saved to {save_to_path}',
+            'green'
+        )
+    )
+        
 
 def main():
     args = parse_args()

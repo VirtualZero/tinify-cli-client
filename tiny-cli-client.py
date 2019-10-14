@@ -448,27 +448,27 @@ def parse_args():
     parser.add_argument(
         '-f',
         '--fit',
-        help=f'Scale the optimized image(s) to a desired width or height while keeping aspect ratio. '
-        f'Requires either -w OR -H option, but not both. '
-        f'Usage: python tiny-cli-client.py -Rsi /path/to/image.jpg -w 125',
+        help=f'Scale and fit the optimized image(s) within a desired width and height. ' \
+        f'Requires both -w AND -H options. ' \
+        f'Usage: python tiny-cli-client.py -Rfi /path/to/image.jpg -w 125 -H 125',
         action='store_true'
     )
 
     parser.add_argument(
         '-t',
         '--thumb',
-        help=f'Scale the optimized image(s) to a desired width or height while keeping aspect ratio. '
-        f'Requires either -w OR -H option, but not both. '
-        f'Usage: python tiny-cli-client.py -Rsi /path/to/image.jpg -w 125',
+        help=f'Create a thumbnail of the optimized image(s) to a desired width and height. ' \
+        f'Requires both -w AND -H options. '
+        f'Usage: python tiny-cli-client.py -Rti /path/to/image.jpg -w 125 -H 125',
         action='store_true'
     )
 
     parser.add_argument(
         '-c',
         '--cover',
-        help=f'Scale the optimized image(s) to a desired width or height while keeping aspect ratio. '
-        f'Requires either -w OR -H option, but not both. '
-        f'Usage: python tiny-cli-client.py -Rsi /path/to/image.jpg -w 125',
+        help=f'Scale and crop the optimized image(s) to a desired width and height. '
+        f'Requires both -w AND -H options. '
+        f'Usage: python tiny-cli-client.py -Rci /path/to/image.jpg -w 125 -H 125',
         action='store_true'
     )
 

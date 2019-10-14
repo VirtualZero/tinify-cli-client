@@ -117,6 +117,162 @@ def optimize_directory(directory, output_path):
     sys.exit(0)
 
 
+def resize_directory(directory, output_path, method, height, width):
+    if not output_path:
+        resized_directory = os.path.join(
+            directory,
+            method
+        )
+
+    else:
+        resized_directory = output_path
+
+    if not os.path.isdir(resized_directory):
+        os.makedirs(resized_directory)
+
+    output_messages = []
+
+    def resize_image_(image_path):
+        image_name = image_path.strip('/').split('/')[-1]
+        with Halo(
+            text=f'Resizing {image_name} ...',
+            spinner='dots',
+            text_color='white',
+            color='green'
+        ) as spinner:
+            save_to_path = os.path.join(resized_directory, image_name)
+            source = tinify.from_file(image_path)
+
+            if method == 'scale':
+                if height:
+                    resized_image = source.resize(
+                        method=method,
+                        height=int(height)
+                    )
+
+                elif width:
+                    resized_image = source.resize(
+                        method=method,
+                        width=int(width)
+                    )
+
+            else:
+                resized_image = source.resize(
+                    method=method,
+                    width=int(width),
+                    height=int(height)
+                )
+
+            resized_image.to_file(save_to_path)
+
+        output_messages.append(
+            colored(
+                f'Resized image saved to {save_to_path}',
+                'green'
+            )
+        )
+
+    images = [
+        f'{os.path.join(directory, image)}'
+        for image in os.listdir(directory)
+        if image.split('.')[-1] in valid_extensions
+    ]
+
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        executor.map(resize_image_, images)
+
+    for message in output_messages:
+        print(
+            colored(
+                message,
+                'green'
+            )
+        )
+
+    sys.exit(0)
+
+
+def resize_image(image_path, output_path, new_name, method, height, width):
+    image_name = image_path.strip('/').split('/')[-1]
+    with Halo(
+        text=f'Resizing {image_name} ...',
+        spinner='dots',
+        text_color='white',
+        color='green'
+    ) as spinner:
+        path_regex = re.compile('^(.*/).*$')
+        name = image_name.split('.')[0]
+        extension = image_name.split('.')[1]
+        source = tinify.from_file(image_path)
+
+        if method == 'scale':
+            if height:
+                resized_image = source.resize(
+                    method=method,
+                    height=int(height)
+                )
+
+                resized_name = f'{name}-scaled-h{height}.{extension}'
+
+            elif width:
+                resized_image = source.resize(
+                    method=method,
+                    width=int(width)
+                )
+
+                resized_name = f'{name}-scaled-w{width}.{extension}'
+
+        else:
+            resized_image = source.resize(
+                method=method,
+                width=int(width),
+                height=int(height)
+            )
+
+            resized_name = f'{name}-{method}-{width}x{height}.{extension}'
+
+        if not output_path:
+            if not new_name:
+                try:
+                    save_to_path = os.path.join(
+                        path_regex.search(image_path).group(1),
+                        resized_name
+                    )
+
+                except AttributeError:
+                    save_to_path = resized_name
+
+                resized_image.to_file(save_to_path)
+
+            else:
+                try:
+                    save_to_path = os.path.join(
+                        path_regex.search(image_path).group(1),
+                        new_name
+                    )
+
+                except AttributeError:
+                    save_to_path = new_name
+
+                resized_image.to_file(save_to_path)
+
+        else:
+            if not new_name:
+                save_to_path = os.path.join(output_path, resized_name)
+                resized_image.to_file(save_to_path)
+
+            else:
+                save_to_path = os.path.join(output_path, new_name)
+                resized_image.to_file(save_to_path)
+
+    print(
+        colored(
+            f'Resized image saved to {save_to_path}',
+            'green'
+        )
+    )
+
+
 def verify_input(image, directory):
     if not image and not directory:
         print(
@@ -204,6 +360,8 @@ def validate_height_and_width(args):
                 )
             )
 
+            sys.exit(1)
+
         if args.height and args.width:
             print(
                 colored(
@@ -211,6 +369,8 @@ def validate_height_and_width(args):
                     'red'
                 )
             )
+
+            sys.exit(1)
 
     elif args.fit or args.cover or args.thumb:
         if not args.height or not args.width:
@@ -220,6 +380,8 @@ def validate_height_and_width(args):
                     'red'
                 )
             )
+
+            sys.exit(1)
 
 
 def parse_args():
@@ -325,87 +487,6 @@ def parse_args():
     return parser.parse_args()
 
 
-def resize_image(image_path, output_path, new_name, method, height, width):
-    image_name = image_path.strip('/').split('/')[-1]
-    with Halo(
-        text=f'Resizing {image_name} ...',
-        spinner='dots',
-        text_color='white',
-        color='green'
-    ) as spinner:
-        path_regex = re.compile('^(.*/).*$')
-        name = image_name.split('.')[0]
-        extension = image_name.split('.')[1]
-        source = tinify.from_file(image_path)
-
-        if method == 'scale':
-            if height:
-                resized_image = source.resize(
-                    method=method,
-                    height=int(height)
-                )
-
-                resized_name = f'{name}-scaled-h{height}.{extension}'
-
-            elif width:
-                resized_image = source.resize(
-                    method=method,
-                    width=int(width)
-                )
-
-                resized_name = f'{name}-scaled-w{width}.{extension}'
-
-        else:
-            resized_image = source.resize(
-                method=method,
-                width=int(width),
-                height=int(height)
-            )
-
-            resized_name = f'{name}-{method}-{width}x{height}.{extension}'
-
-        if not output_path:
-            if not new_name:
-                try:
-                    save_to_path = os.path.join(
-                        path_regex.search(image_path).group(1),
-                        resized_name
-                    )
-
-                except AttributeError:
-                    save_to_path = resized_name
-
-                resized_image.to_file(save_to_path)
-
-            else:
-                try:
-                    save_to_path = os.path.join(
-                        path_regex.search(image_path).group(1),
-                        new_name
-                    )
-
-                except AttributeError:
-                    save_to_path = new_name
-
-                resized_image.to_file(save_to_path)
-
-        else:
-            if not new_name:
-                save_to_path = os.path.join(output_path, resized_name)
-                resized_image.to_file(save_to_path)
-
-            else:
-                save_to_path = os.path.join(output_path, new_name)
-                resized_image.to_file(save_to_path)
-
-    print(
-        colored(
-            f'Resized image saved to {save_to_path}',
-            'green'
-        )
-    )
-        
-
 def main():
     args = parse_args()
     verify_input(args.image, args.directory)
@@ -432,37 +513,36 @@ def main():
     elif args.image:
         validate_image(args.image)
 
-    # Compress Option
     if args.compress:
 
-        # Directory Option
         if args.directory:
             optimize_directory(args.directory, output_path)
                 
         elif args.image:
             compress_image(args.image, output_path, new_name)
 
-    # Resize Option
     elif args.resize:
         validate_resize_options(args)
         validate_height_and_width(args)
 
-        if args.image:
-            if args.scale:
-                method = 'scale'
+        if args.scale:
+            method = 'scale'
 
-            elif args.fit:
-                method = 'fit'
+        elif args.fit:
+            method = 'fit'
 
-            elif args.cover:
-                method = 'cover'
+        elif args.cover:
+            method = 'cover'
 
-            elif args.thumb:
-                method = 'thumb'
+        elif args.thumb:
+            method = 'thumb'
 
+        if args.directory:
+            resize_directory(args.directory, output_path, method, args.height, args.width)
+
+        elif args.image:
             resize_image(args.image, output_path, new_name, method, args.height, args.width)
                 
-
 
 if __name__ == '__main__':
     main()

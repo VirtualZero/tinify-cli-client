@@ -400,14 +400,14 @@ def parse_args():
         '-i',
         '--image',
         help=f'Compresses and optimizes a single image. '\
-        f'Usage: python tiny-cli-client.py -Ci /path/to/image.png'
+        f'Usage: python tinify-cli-client -Ci /path/to/image.png'
     )
 
     parser.add_argument(
         '-d',
         '--directory',
         help=f'Compresses and optimizes all images within a directory. '\
-        f'Usage: python tiny-cli-client.py -Cd /path/to/directory'
+        f'Usage: python tinify-cli-client -Cd /path/to/directory'
     )
 
     parser.add_argument(
@@ -418,14 +418,14 @@ def parse_args():
         f'directory specified by the -d option. All optimized images are saved within. Default ' \
         f'action with the -i option is to append "-optimized" to the image name and save the optimized ' \
         f'image to the same directory as the source image. ' \
-        f'Usage: python tiny-cli-client.py -Ci /path/to/image.jpg -o /path/to/save/directory'
+        f'Usage: python tinify-cli-client -Ci /path/to/image.jpg -o /path/to/save/directory'
     )
 
     parser.add_argument(
         '-n',
         '--name',
         help=f'Rename the optimized image. DOES NOT WORK WITH -d OPTION. ' \
-        f'Usage: python tiny-cli-client.py -Ci /path/to/image.jpg -o /path/to/save/directory -n new-image-name.jpg'
+        f'Usage: python tinify-cli-client -Ci /path/to/image.jpg -o /path/to/save/directory -n new-image-name.jpg'
     )
 
     parser.add_argument(
@@ -441,7 +441,7 @@ def parse_args():
         '--scale',
         help=f'Scale the optimized image(s) to a desired width or height while keeping aspect ratio. ' \
         f'Requires either -w OR -H option, but not both. ' \
-        f'Usage: python tiny-cli-client.py -Rsi /path/to/image.jpg -w 125',
+        f'Usage: python tinify-cli-client -Rsi /path/to/image.jpg -w 125',
         action='store_true'
     )
 
@@ -450,7 +450,7 @@ def parse_args():
         '--fit',
         help=f'Scale and fit the optimized image(s) within a desired width and height. ' \
         f'Requires both -w AND -H options. ' \
-        f'Usage: python tiny-cli-client.py -Rfi /path/to/image.jpg -w 125 -H 125',
+        f'Usage: python tinify-cli-client -Rfi /path/to/image.jpg -w 125 -H 125',
         action='store_true'
     )
 
@@ -459,7 +459,7 @@ def parse_args():
         '--thumb',
         help=f'Create a thumbnail of the optimized image(s) to a desired width and height. ' \
         f'Requires both -w AND -H options. '
-        f'Usage: python tiny-cli-client.py -Rti /path/to/image.jpg -w 125 -H 125',
+        f'Usage: python tinify-cli-client -Rti /path/to/image.jpg -w 125 -H 125',
         action='store_true'
     )
 
@@ -468,7 +468,7 @@ def parse_args():
         '--cover',
         help=f'Scale and crop the optimized image(s) to a desired width and height. '
         f'Requires both -w AND -H options. '
-        f'Usage: python tiny-cli-client.py -Rci /path/to/image.jpg -w 125 -H 125',
+        f'Usage: python tinify-cli-client -Rci /path/to/image.jpg -w 125 -H 125',
         action='store_true'
     )
 

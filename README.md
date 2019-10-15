@@ -103,7 +103,7 @@ pipenv run python tinify-cli-client.py -h
 
 ### Compression
 
-With tinify-cli-client, you can compress a single image or an entire directory. The optional flags `-o` and `-n` may also be specified. When compressing a single image, the new, compressed image will be saved to the same directory as the source image with '-optimized' appended to the filename (default behavior), or to the optional output directory specified after the `-o` flag (The filename remains the same as the source image in this case). When compressing an entire directory, a subdirectory named 'optimized' will be created within the source directory and the new, compressed images will be saved within the 'optimized' subdirectory (All images will retain the source name).
+With tinify-cli-client, you can compress a single image or an entire directory. The optional flags `-o` and `-n` may also be specified.
 
 #### Examples
 
@@ -287,7 +287,7 @@ With tinify-cli-client, there are four methods of image resizing.
 
     Cover a desired width and height with an image. Covering requires both `-H` and `-w` flags and will not work without them.
 
-      - **Single Image**
+   - **Single Image**
 
       To cover an image:
 
@@ -298,7 +298,7 @@ With tinify-cli-client, there are four methods of image resizing.
       To cover an image and save it to a different directory:
 
       ```sh
-      pipenv run python tinify-cli-client.py -Rci /path/to/image/example.png -w 75 -H 75 -o /path/to/different/directory
+      pipenv run python tinify-cli-client.py -Rci /path/to/image/example.png -H 75 -w 75 -o /path/to/different/directory
       ```
 
       To cover an image and change its name:
@@ -310,7 +310,7 @@ With tinify-cli-client, there are four methods of image resizing.
       To cover an image, change its name, and save it to a different directory:
 
       ```sh
-      pipenv run python tinify-cli-client.py -Rci /path/to/image/example.png -w 75 -H 75 -n new-image-name.png -o /path/to/different/directory
+      pipenv run python tinify-cli-client.py -Rci /path/to/image/example.png -H 75 -w 75 -n new-image-name.png -o /path/to/different/directory
       ```
 
    - **Directory**

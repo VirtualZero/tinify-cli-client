@@ -39,10 +39,16 @@ def compress_image(image_path, output_path, new_name):
 
             else:
                 path_regex = re.compile('^(.*/).*$')
-                save_to_path = os.path.join(
-                    path_regex.search(image_path).group(1),
-                    new_name
-                )
+                
+                try:
+                    save_to_path = os.path.join(
+                        path_regex.search(image_path).group(1),
+                        new_name
+                    )
+
+                except AttributeError:
+                    save_to_path = new_name
+                    
                 source.to_file(save_to_path)
 
         else:
@@ -386,7 +392,7 @@ def validate_height_and_width(args):
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        description="Manipulate images using the tinify API."
+        description="Manipulate images using the TinyPNG's API."
     )
 
     parser.add_argument(
@@ -457,7 +463,7 @@ def parse_args():
     parser.add_argument(
         '-t',
         '--thumb',
-        help=f'Create a thumbnail of the optimized image(s) to a desired width and height. ' \
+        help=f'Create intelligent thumbnails that match a desired width and height from image(s). '
         f'Requires both -w AND -H options. '
         f'Usage: python tinify-cli-client -Rti /path/to/image.jpg -w 125 -H 125',
         action='store_true'
